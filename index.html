@@ -26,6 +26,18 @@
 			svg {
 				background-color: white;
 			}
+			div.tooltip {	
+			    position: absolute;			
+			    text-align: center;			
+			    width: 60px;					
+			    height: 28px;					
+			    padding: 2px;				
+			    font: 12px sans-serif;		
+			    background: lightsteelblue;	
+			    border: 0px;		
+			    border-radius: 8px;			
+			    pointer-events: none;			
+			}
 		</style>
 	</head>
 	<body>
@@ -63,6 +75,9 @@
 					.range(["rgb(237,248,233)","rgb(186,228,179)",
 						"rgb(116,196,118)","rgb(49,163,84)","rgb(0,109,44)"]);
 
+			var tooltip = d3.select("body").append("div") 
+			    .attr("class", "tooltip")       
+			    .style("opacity", 0);
 			//create scale to show which wht each shade of color represented
 			var x = d3.scaleLinear()
 			    .domain([0, 600])
@@ -136,6 +151,23 @@
 					   .data(json.features)
 					   .enter()
 					   .append("path")
+					     .attr("d", path)
+					     .on("mouseover", function(d) {    
+					       tooltip.transition()    
+					       .duration(200)    
+					       .style("opacity", .9);    
+					       tooltip.html(d.properties.Name + 
+					       	"<br> population:" 
+					       	+ d.properties.value + "<br>"
+					       	+ "million")  
+					       .style("left", (d3.event.pageX) + "px")   
+					       .style("top", (d3.event.pageY - 28) + "px");  
+					     })          
+					     .on("mouseout", function(d) {   
+					       tooltip.transition()    
+					       .duration(500)    
+					       .style("opacity", 0); 
+					     })
 					   .style("fill", function(d) {
 
 					   		var value = d.properties.value;
